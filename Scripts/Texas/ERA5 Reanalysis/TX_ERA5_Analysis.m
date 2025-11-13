@@ -6,7 +6,8 @@
 
 clear; 
 close all;
-
+%% Create Modifiable Variable: WIND SPEED
+windSpeedMin = 2;
 
 %% TX1 - Import Data and Read
 TxERA5 = "Working\Data\Raw\TX-ERA5-FEB-1-28-2021.grib"; % Import File/Data
@@ -60,7 +61,7 @@ WindSpeed = sqrt(U.^2 + V.^2);
 % Set parameters for when icing occurs: Below 0 Celsius, RH must be 90%+,
 % Wind speed must be minimum of 6 m/s - can manipulate velocity as
 % different papers suggest different limits
-icingFreq = (T < 0) & (RH >= 90) & (WindSpeed >= 6);  % 3D logical array
+icingFreq = (T < 0) & (RH >= 90) & (WindSpeed >= windSpeedMin);  % 3D logical array
 
 icingHours = sum(icingFreq, 3);  % Sum over time
 
@@ -93,7 +94,7 @@ geoshow(ax, texas, 'FaceColor', 'none', 'EdgeColor', 'k', 'LineWidth', 1.5);  % 
 % Display Final plot
 geoshow(ax, latGrid, lonGrid, icingHours, 'DisplayType', 'surface');
 colorbar;
-title('Total Icing Hours for the Month of February - Texas, 6 m/s');
+title(sprintf('Total Icing Hours for the Month of February - Texas, %d m/s', windSpeedMin), 'FontSize', 14);
 
 % % Add Texas cities (necessary?)
 % cityNames = {'Houston', 'Dallas', 'Austin', 'San Antonio'};
@@ -106,7 +107,7 @@ title('Total Icing Hours for the Month of February - Texas, 6 m/s');
 %           'FontWeight', 'bold', 'Color', [128,0,128]/255);  % white text
 % end
 
-saveas(figure(1), [pwd '\Working\Results\TX-ERA5\TX-ERA5-6ms.png'])
+saveas(figure(1), fullfile(pwd, sprintf('Working\\Results\\TX-ERA5\\TX-ERA5-%dms.png', windSpeedMin)));
 
 
 %% TX4 - Now look at winter storm Uri only
@@ -142,12 +143,12 @@ alpha(hRasterStorm, 0.7);   % optional transparency
 colormap(jet);
 caxis([0 max(icingHoursStorm(:))]);
 colorbar;
-title('Total Icing Hours - Texas (Feb 14-17, Winter Storm Uri)', 'FontSize', 14);
+title(sprintf('Total Icing Hours - Texas (Feb 14-17, Winter Storm Uri), %d m/s', windSpeedMin), 'FontSize', 14);
 
 % Add texas borders to image
 geoshow(ax, texas, 'FaceColor', 'none', 'EdgeColor', 'k', 'LineWidth', 1.5);
 
 % Save figure
-saveas(gcf, fullfile(pwd, 'Working\Results\TX-ERA5\TX-ERA5-6ms-storm.png'));
+saveas(gcf, fullfile(pwd, sprintf('Working\\Results\\TX-ERA5\\TX-ERA5-%dms-storm.png', windSpeedMin)));
 
 
