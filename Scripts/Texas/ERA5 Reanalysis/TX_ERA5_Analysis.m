@@ -59,9 +59,9 @@ lon = linspace(lonlim(1), lonlim(2), R.RasterSize(2));  % cols = longitude
 WindSpeed = sqrt(U.^2 + V.^2);
 
 % Set parameters for when icing occurs: Below 0 Celsius, RH must be 90%+,
-% Wind speed must be minimum of 6 m/s - can manipulate velocity as
+% Wind speed must be minimum - can manipulate velocity as
 % different papers suggest different limits
-icingFreq = (T < 0) & (RH >= 90) & (WindSpeed >= windSpeedMin);  % 3D logical array
+icingFreq = (T < 2) & (RH >= 90) & (WindSpeed >= windSpeedMin);  % 3D logical array
 
 icingHours = sum(icingFreq, 3);  % Sum over time
 
@@ -107,7 +107,7 @@ title(sprintf('Total Icing Hours for the Month of February - Texas, %d m/s', win
 %           'FontWeight', 'bold', 'Color', [128,0,128]/255);  % white text
 % end
 
-saveas(figure(1), fullfile(pwd, sprintf('Working\\Results\\TX-ERA5\\TX-ERA5-%dms.png', windSpeedMin)));
+% saveas(figure(1), fullfile(pwd, sprintf('Working\\Results\\TX-ERA5\\TX-ERA5-%dms.png', windSpeedMin)));
 
 
 %% TX4 - Now look at winter storm Uri only
@@ -141,14 +141,15 @@ ax = usamap('Texas');
 hRasterStorm = geoshow(ax, latGridStorm, lonGridStorm, icingHoursStorm, 'DisplayType', 'surface');
 alpha(hRasterStorm, 0.7);   % optional transparency
 colormap(jet);
-caxis([0 max(icingHoursStorm(:))]);
 colorbar;
-title(sprintf('Total Icing Hours - Texas (Feb 14-17, Winter Storm Uri), %d m/s', windSpeedMin), 'FontSize', 14);
+cb = colorbar;
+ylabel(cb, 'Icing hours', 'FontSize',12);
+title(sprintf('Total Icing Hours (Feb 14-17, Winter Storm Uri), %d m/s', windSpeedMin), 'FontSize', 14);
 
 % Add texas borders to image
 geoshow(ax, texas, 'FaceColor', 'none', 'EdgeColor', 'k', 'LineWidth', 1.5);
 
 % Save figure
-saveas(gcf, fullfile(pwd, sprintf('Working\\Results\\TX-ERA5\\TX-ERA5-%dms-storm.png', windSpeedMin)));
+saveas(gcf, fullfile(pwd, sprintf('\\Working\\Results\\TX-ERA5\\TX-ERA5-%dms-storm.png', windSpeedMin)));
 
 
